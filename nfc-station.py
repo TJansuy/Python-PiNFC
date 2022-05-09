@@ -5,15 +5,15 @@ This code is intended to be ran from the Raspberry Pi with the PN532 NFC HAT att
 """
 
 # Using PN532 library from Waveshare
+import RPi.GPIO
 import pn532.uart
 
-import RPi.GPIO
-
 import sys 
+import socket 
+
 
 if __name__ != "__main__":
   sys.exit("Please run the NFC-station separately.")
-
 
 # Init PN532 api
 nfc = pn532.uart.PN532_UART 

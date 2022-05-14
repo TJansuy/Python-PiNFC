@@ -15,6 +15,25 @@ import socket
 if __name__ != "__main__":
   sys.exit("Please run the NFC-station separately.")
 
+target_ip = ""
+port = 42000
+sock = None
+
+try:
+  target_ip = input("Target IP to deliver messages to: ")
+
+  # Initialise UDP Socket
+  sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+  # Test UDP Socket
+  msg = "testing"
+  print("To:",target_ip ,"Sending message:", msg)
+
+  # Message must be encoded into bytes in order to be sent
+  sock.sendto(str.encode(msg), (target_ip, port))
+
+except:
+  sys.exit("Unable to initialise")
+
 # Init PN532 api
 nfc = PN532_UART(debug=False, reset=20)
 nfc.SAM_configuration()

@@ -20,7 +20,10 @@ port = 42000
 sock = None
 
 try:
-  target_ip = input("Target IP to deliver messages to: ")
+  if len(sys.argv) == 2:
+    target_ip = sys.argv[1]
+  else:
+    target_ip = input("Target IP to deliver messages to: ")
 
   # Initialise UDP Socket
   sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

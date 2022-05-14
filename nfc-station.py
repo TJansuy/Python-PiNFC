@@ -54,6 +54,10 @@ try:
       # The sensor found something
       print(scan)
 
+      if sock is not None:
+        message = str.encode(str(scan))
+        sock.sendto(message, (target_ip, port))
+
 
 finally:
   RPi.GPIO.cleanup()

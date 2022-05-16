@@ -46,9 +46,17 @@ try:
   # Main Loop
   while True:
     
+    try:
     # Poll the sensor for NFC presence
-    scan = nfc.read_passive_target(timeout=0.5)
-    
+      scan = nfc.read_passive_target(timeout=0.5)
+    except RuntimeError as e:
+      print(e)
+      message = "Runtime Error Occurred: " + str(e)
+      if sock is not None:
+        message = str.encode(message)
+        sock.sendto(message, (target_ip, port))
+        continue
+
     # Check if the poll returned anything
     if scan is not None:
       # The sensor found something

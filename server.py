@@ -6,14 +6,44 @@ if __name__ != "__main__":
   sys.exit("Please run server.py separately")
 
 import socket
-
+import mariadb
 
 bind_ip = "0.0.0.0" # Since this is the server, bind to 0.0.0.0
 bind_port = 42000
 
 running = True
 
+# Process messages from the socket
+def ProcessMessage(msg):
+  print(message) # Debugging
+  print(message[0].decode("utf-8"))
+  return message[0].decode("utf-8")
 
+def QueryDB(cursor, token):
+  if token is None:
+    return False
+  cursor.execute("SELECT * FROM test;")
+  names = {}
+  ids = {}
+
+  for first_name, last_name, user_id in cursor:
+    names[f"{first_name} {last_name}"] = user_id
+    ids[user_id] = f"{first_name} {last_name}"
+  
+  flag = False
+  for n in names:
+    print(f"Comparing: {token} in {n}")
+    if token in n:
+      flag = True
+      break
+  if not flag:
+    print(f"Checking ids")
+    for i in ids:
+      print(f"Comparing: {token} in {i}")
+      if token in str(i):
+        flag = True
+        break
+  return flag
 
 # Init socket
 sock = None
@@ -34,6 +64,9 @@ except Exception as e:
 
 print("Server socket initialised")
 
+sql_conn = mariadb.connect(user="root", password="root", host="localhost", database="sample_users")
+sql_cur = sql_conn.cursor()
+
 # Begin main execution loop
 print("Starting Server:")
 while running:
@@ -49,5 +82,14 @@ while running:
 
   if message is None:
     continue
-  print(message) # Debugging
   
+  # Process Message
+  token_name = ProcessMessage(message)
+  # Query DB
+  result = QueryDB(sql_cur, token_name)
+  # Process Result
+  if result:
+    print("Success")
+  else:
+    print("Not Allowed")
+  # Perform Function (if Allowed ?)
